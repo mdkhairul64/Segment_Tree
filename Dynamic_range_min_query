@@ -1,0 +1,126 @@
+/// this is also a problem solution from CSES
+
+#include<bits/stdc++.h>
+using namespace std;
+
+typedef long long int ll;
+const int N=2e5+7;
+int ar[N];
+ll seg[4*N];
+
+int n;
+
+// void init_code()
+// {
+//     #ifndef ONLINE_JUDGE
+//     freopen("input.txt","r",stdin);
+//     freopen("output.txt","w",stdout);
+//     #endif
+// }
+
+// void print_tree()
+// {
+//     cout<<"printing the tree"<<endl;
+//     for(int i=1;i<=2*n;i++)
+//     {
+//         cout<<seg[i]<<" ";
+//     }cout<<endl;
+// }
+
+void build(int i,int l,int r)
+{
+    if(l == r)
+    {
+        seg[i]=ar[l];
+        return ;
+    }
+
+    int mid=(l+r)/2;
+
+    build(2*i,l,mid);
+    build(2*i+1,mid+1,r);
+
+
+    seg[i]=min(seg[2*i],seg[2*i+1]);
+
+    return;
+}
+
+void update(int i,int l,int r,int k,ll val)
+{
+    if(l==r)
+    {
+        seg[i]=val;
+        //ar[i]=val;
+        return;
+    }
+    int mid=(l+r)/2;
+
+    if(k<=mid)
+    {
+        update(2*i,l,mid,k,val);
+    }
+    else{
+        update(2*i+1,mid+1,r,k,val);
+    }
+    seg[i]=min(seg[2*i],seg[2*i+1]);
+
+    return;
+}
+ll query(int i,int l,int r,int a,int b)
+{
+    if(b<l || a>r)
+    {
+        return 1e9;
+    }
+    else if(a<=l && r<=b)
+    {
+        return seg[i];
+    }
+
+    int mid=(l+r)/2;
+    ll p=query(2*i,l,mid,a,b);
+    ll q=query(2*i+1,mid+1,r,a,b);
+
+    return min(p,q);
+}
+
+
+int main()
+{
+    
+    int q;
+    cin>>n>>q;
+
+    for(int i=1;i<=n;i++)
+    {
+        cin>>ar[i];
+    }
+    build(1,1,n);
+
+   // print_tree();
+
+    while(q--)
+    {
+        int t;
+        cin>>t;
+        if(t==1)
+        {
+            int k;
+            ll u;
+            cin>>k>>u;
+
+            update(1,1,n,k,u);
+           // print_tree();
+        }
+        else{
+            int a,b;
+            cin>>a>>b;
+
+             cout<<query(1,1,n,a,b)<<endl;
+        }
+    }
+    
+
+    return 0;
+}
